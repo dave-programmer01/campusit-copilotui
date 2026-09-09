@@ -66,8 +66,16 @@ body {
 /* Full-screen chat shell. --app-h tracks the visual viewport on browsers that
    do not resize the layout viewport for the on-screen keyboard (iOS Safari). */
 .app-shell {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 100dvh;
   height: var(--app-h, 100dvh);
+  /* iOS anchors fixed elements to the layout viewport, but the student is
+     looking at the visual viewport offset inside it. Without this shift the
+     shell rides up under the URL bar and leaves a gap above the toolbar. */
+  transform: translateY(var(--app-top, 0px));
 }
 
 /* The chat view locks the document so only the transcript scrolls.

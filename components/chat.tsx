@@ -132,12 +132,14 @@ export function Chat() {
       if (window.scrollY !== 0) window.scrollTo(0, 0);
     };
 
-    const setHeight = () => {
+    // Track both the size of the visible band and where it sits.
+    const setGeometry = () => {
       root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
+      root.style.setProperty("--app-top", `${Math.round(vv.offsetTop)}px`);
     };
 
     const onResize = () => {
-      setHeight();
+      setGeometry();
       pinToTop();
       // Wait for the shell to reflow at its new height before scrolling, or the
       // transcript lands on the old bottom.
@@ -148,15 +150,20 @@ export function Chat() {
       setKeyboardOpen(vv.height < window.innerHeight - 100);
     };
 
-    setHeight();
+    // offsetTop changes arrive as visual-viewport scrolls, not resizes.
+    const onScroll = () => {
+      setGeometry();
+      pinToTop();
+    };
+
+    setGeometry();
     vv.addEventListener("resize", onResize);
-    // Only correct the offset here — height is unchanged, and forcing a scroll
-    // would fight the student panning a pinch-zoomed page.
-    vv.addEventListener("scroll", pinToTop);
+    vv.addEventListener("scroll", onScroll);
     return () => {
       vv.removeEventListener("resize", onResize);
-      vv.removeEventListener("scroll", pinToTop);
+      vv.removeEventListener("scroll", onScroll);
       root.style.removeProperty("--app-h");
+      root.style.removeProperty("--app-top");
     };
   }, []);
 
