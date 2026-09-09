@@ -74,6 +74,16 @@ body {
     0 6px 20px -8px rgba(2, 183, 99, 0.7);
 }
 
+/* The chat occupies exactly the visible viewport. The composer is a flex child
+   at its bottom edge, so it cannot scroll out of view and needs no sticky or
+   fixed positioning (both of which misbehave on iOS Safari).
+   --app-h is set from visualViewport where the browser keeps the layout
+   viewport at full height while the keyboard is open. */
+.app-shell {
+  height: 100dvh;
+  height: var(--app-h, 100dvh);
+}
+
 /* Scrollbars stay out of the way but keep the green cast */
 .scroll-thin {
   scrollbar-width: thin;

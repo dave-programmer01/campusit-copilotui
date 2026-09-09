@@ -110,6 +110,24 @@ export function Chat() {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [items, pending, error]);
 
+  // iOS keeps the layout viewport at full height while the keyboard is open, so
+  // bind the shell to the height that is actually on screen. Height only: no
+  // scroll locking, no offset maths.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const root = document.documentElement;
+    const apply = () => {
+      root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
+    };
+    apply();
+    vv.addEventListener("resize", apply);
+    return () => {
+      vv.removeEventListener("resize", apply);
+      root.style.removeProperty("--app-h");
+    };
+  }, []);
+
   const push = useCallback((item: Item) => setItems((v) => [...v, item]), []);
 
   const deliver = useCallback(
@@ -238,7 +256,7 @@ export function Chat() {
       : [];
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-glow lg:h-[100dvh] lg:min-h-0 lg:flex-row">
+    <div className="app-shell flex flex-col overflow-hidden bg-glow lg:flex-row">
       {/* Sidebar — permanent on desktop, drawer on mobile */}
       <aside className="hidden w-[16.5rem] shrink-0 border-r border-line bg-surface/60 lg:block">
         <Sidebar active={nav} onNavigate={onNavigate} />
@@ -258,8 +276,8 @@ export function Chat() {
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col lg:h-full lg:overflow-hidden">
-        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface px-4 py-3 lg:static">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3">
           <button
             type="button"
             onClick={() => setDrawer(true)}
@@ -280,7 +298,7 @@ export function Chat() {
           </div>
         </header>
 
-        <main className="scroll-thin flex-1 px-4 py-5 lg:min-h-0 lg:overflow-y-auto">
+        <main className="scroll-thin min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5">
           <div className="mx-auto flex max-w-[720px] flex-col gap-4">
             {items.map((item) => {
               switch (item.kind) {
@@ -313,7 +331,7 @@ export function Chat() {
           </div>
         </main>
 
-        <footer className="sticky bottom-0 z-20 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:static lg:pb-3">
+        <footer className="shrink-0 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mx-auto flex max-w-[720px] flex-col gap-2.5">
             {showBar && (
               <DeflectionBar onAnswer={answerDeflection} busy={deflectBusy} />
