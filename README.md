@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CampusIT Co-Pilot — frontend
 
-## Getting Started
+Unofficial, student-built chat UI for Lehman College tech help. A thin Next.js
+client over the existing Spring Boot backend: it renders the conversation and
+records whether the student actually got unstuck.
 
-First, run the development server:
+## Setup
 
 ```bash
+cp .env.example .env.local   # then set the backend URL
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`NEXT_PUBLIC_API_BASE_URL` is the only configuration. Nothing else is
+hardcoded, and there are no secrets in the client — the student-facing
+endpoints are public.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Import the repo, then set `NEXT_PUBLIC_API_BASE_URL` in Project Settings →
+Environment Variables (all environments). Both routes prerender as static
+content; there is no server-side code.
 
-## Learn More
+## How it works
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — splash screen.
+- `/chat` — the chat client (`components/chat.tsx`).
+- `lib/api.ts` — the only module that talks to the backend.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Conversation state lives on the backend.** The client generates one
+`conversationId` per session (`crypto.randomUUID()`, persisted in
+`sessionStorage`, falling back to React state where storage is blocked) and
+sends it on every turn. Only the new user message goes up — the local message
+array exists purely to render the transcript.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The `/deflection` POST is the metric the project exists to collect: `resolved:
+true` from "Yes, sorted", `false` from "Still stuck". `topic` and `device` are
+sent only when the student picked them explicitly (a sidebar topic, a device
+chip) — never guessed.
 
-## Deploy on Vercel
+## Backend note
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Rate-limit responses (429) are handled, but the `Retry-After` header is not
+CORS-safelisted, so the browser cannot read it unless the backend also sends
+`Access-Control-Expose-Headers: Retry-After`. Without it the UI says "try again
+in a moment" instead of naming the number of seconds.
