@@ -110,15 +110,25 @@ export function Bee({ className, mood = "happy", title }: BeeProps) {
 export function BeeAvatar({
   className = "size-9",
   mood,
+  pulse = false,
 }: {
   className?: string;
   mood?: "happy" | "sleepy";
+  pulse?: boolean;
 }) {
   return (
-    <span
-      className={`${className} grid shrink-0 place-items-center overflow-hidden rounded-full border border-success/25 bg-deep ring-glow`}
-    >
-      <Bee className="size-[86%]" mood={mood} />
-    </span>
+    <div className="relative inline-flex shrink-0">
+      <span
+        className={`${className} grid shrink-0 place-items-center overflow-hidden rounded-full border border-success/35 bg-deep ring-glow transition-transform duration-200 hover:scale-105`}
+      >
+        <Bee className="size-[86%]" mood={mood} />
+      </span>
+      {pulse && (
+        <span className="absolute -bottom-0.5 -right-0.5 flex size-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+          <span className="relative inline-flex size-3 rounded-full border-2 border-[#061513] bg-success" />
+        </span>
+      )}
+    </div>
   );
 }

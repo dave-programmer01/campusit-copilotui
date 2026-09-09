@@ -1,42 +1,125 @@
 import Link from "next/link";
 import { Bee } from "@/components/bee";
-import { ArrowIcon, BuildingIcon } from "@/components/icons";
+import {
+  ArrowIcon,
+  BuildingIcon,
+  LockIcon,
+  MailIcon,
+  SparklesIcon,
+  WifiIcon,
+} from "@/components/icons";
+
+const QUICK_TOPICS = [
+  {
+    key: "wifi",
+    title: "Wi-Fi Help",
+    desc: "Connect to eduroam & fix drops",
+    Icon: WifiIcon,
+  },
+  {
+    key: "login",
+    title: "Password Reset",
+    desc: "Unlock Lehman login & CUNY ID",
+    Icon: LockIcon,
+  },
+  {
+    key: "cunyfirst",
+    title: "CUNYfirst & Email",
+    desc: "Access student email & schedule",
+    Icon: MailIcon,
+  },
+];
 
 export default function Home() {
   return (
-    <main className="bg-splash relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-8 text-center sm:py-12">
+    <main className="bg-splash relative flex min-h-dvh flex-col justify-between overflow-x-hidden px-4 py-6 text-center sm:px-6 sm:py-10">
       <CampusSilhouette />
 
-      <div className="relative flex w-full max-w-[420px] flex-col items-center">
-        <Bee className="size-24 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] sm:size-32" />
-
-        <h1 className="mt-5 text-[2.125rem] sm:mt-6 sm:text-[2.375rem] leading-[1.1] font-bold tracking-tight text-white sm:text-[2.75rem]">
-          CampusIT
-          <br />
-          Co-Pilot
-        </h1>
-        <p className="mt-3 text-[0.9375rem] tracking-[0.04em] text-off-white/75">
+      {/* Top Brand Tag */}
+      <header className="relative z-10 mx-auto flex w-full max-w-[440px] items-center justify-between px-2 pt-1">
+        <span className="flex items-center gap-1.5 rounded-full border border-success/30 bg-black/40 px-3 py-1 text-xs font-semibold text-off-white/90 backdrop-blur-md">
+          <span className="size-2 rounded-full bg-lehman-bright animate-pulse" />
           unofficial · student-built
+        </span>
+
+        <span className="flex items-center gap-1.5 text-xs text-light-green/90">
+          <BuildingIcon className="size-4 text-success" />
+          Lehman College
+        </span>
+      </header>
+
+      {/* Hero Section */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[440px] flex-1 flex-col items-center justify-center py-6">
+        {/* Animated Bee Mascot Container */}
+        <div className="group relative">
+          <div className="absolute inset-0 -m-6 rounded-full bg-radial from-success/30 to-transparent blur-2xl animate-pulse-glow" />
+          <div className="relative flex size-28 items-center justify-center rounded-full border border-success/35 bg-deep/90 shadow-[0_12px_40px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:size-32">
+            <Bee className="size-20 drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-110 sm:size-24" />
+          </div>
+        </div>
+
+        <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl sm:leading-[1.15]">
+          campus tech broken?
+          <span className="block text-lehman-bright">i got you.</span>
+        </h1>
+
+        <p className="mt-2.5 max-w-[340px] text-[0.9375rem] leading-6 text-off-white/85 sm:text-base">
+          Fix campus Wi-Fi, login credentials, CUNYfirst, and student email without waiting in line.
         </p>
 
-        <p className="mt-5 text-[1rem] leading-7 sm:mt-7 text-off-white/90">
-          Your AI assistant for Lehman College tech problems: Wi-Fi, CUNYfirst,
-          and student email. No line. Just chat.
-        </p>
-
+        {/* Primary CTA */}
         <Link
           href="/chat"
-          className="btn-primary mt-7 flex w-full sm:mt-9 items-center justify-center gap-2.5 rounded-full px-8 py-4 text-[1.0625rem] font-semibold text-white"
+          className="btn-primary mt-6 flex w-full items-center justify-center gap-2.5 rounded-full px-8 py-4 text-base font-semibold text-white shadow-xl sm:text-[1.0625rem]"
         >
+          <SparklesIcon className="size-5" />
           Start chatting
           <ArrowIcon className="size-5" />
         </Link>
 
-        <p className="mt-7 flex items-center gap-2 sm:mt-10 text-[0.875rem] text-off-white/70">
-          <BuildingIcon className="size-5" />
-          Lehman College
-        </p>
+        {/* Quick Issue Selector for fast mobile entry */}
+        <div className="mt-7 w-full text-left">
+          <p className="mb-2.5 px-1 text-xs font-semibold uppercase tracking-wider text-light-green/80">
+            Or pick your issue directly:
+          </p>
+          <div className="grid gap-2">
+            {QUICK_TOPICS.map(({ key, title, desc, Icon }) => (
+              <Link
+                key={key}
+                href={`/chat?topic=${key}`}
+                className="card-glass card-glass-hover flex items-center justify-between rounded-2xl p-3.5"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-success/15 text-success">
+                    <Icon className="size-5" />
+                  </span>
+                  <div>
+                    <h2 className="text-sm font-semibold text-white">{title}</h2>
+                    <p className="text-xs text-light-green">{desc}</p>
+                  </div>
+                </div>
+                <ArrowIcon className="size-4 shrink-0 text-light-green/60" />
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Human Desk Bottom Notice */}
+      <footer className="relative z-10 mx-auto w-full max-w-[440px] pt-4 pb-2">
+        <div className="flex items-center justify-center gap-2 text-xs text-off-white/70">
+          <span>Walk-in desk: <strong className="text-white font-medium">Carman Hall 108</strong></span>
+          <span>•</span>
+          <a
+            href="https://www.lehman.edu/q"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-lehman-bright hover:underline"
+          >
+            LehmanQ online ↗
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
@@ -48,7 +131,7 @@ function CampusSilhouette() {
       viewBox="0 0 400 120"
       preserveAspectRatio="none"
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%] w-full text-black/25 [mask-image:linear-gradient(to_bottom,transparent,black_55%)]"
+      className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] w-full text-black/35 [mask-image:linear-gradient(to_bottom,transparent,black_50%)]"
       fill="currentColor"
     >
       <path d="M0 120V74h18V56h10v18h16V46h8v28h22V62h26v58H0Z" />

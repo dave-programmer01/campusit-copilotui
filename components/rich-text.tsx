@@ -1,10 +1,11 @@
 import { Fragment, type ReactNode } from "react";
+import { CheckIcon } from "./icons";
 
 type Block =
   | { kind: "p"; text: string }
   | { kind: "list"; items: { marker: string; text: string }[] };
 
-const ORDERED = /^\s*(\d{1,2})[.)]\s+(.*)$/;
+const ORDERED = /^\s*(\d{1,2})(?:[.)]\s*|\s+)(.*)$/;
 const BULLET = /^\s*[-*•]\s+(.*)$/;
 
 /** Splits an assistant reply into paragraphs and step lists. */
@@ -44,17 +45,45 @@ function parse(text: string): Block[] {
   return blocks;
 }
 
-/** Renders **bold** spans; everything else is plain text. */
+/** Parses markdown links, bold text, and inline code. */
 function inline(text: string): ReactNode {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") ? (
-      <strong key={i} className="font-semibold text-white">
-        {part.slice(2, -2)}
-      </strong>
-    ) : (
-      <Fragment key={i}>{part}</Fragment>
-    ),
-  );
+  // Pattern for links [text](url) or bold **text** or code `code`
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g);
+
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return (
+        <code
+          key={i}
+          className="rounded-md border border-line bg-black/40 px-1.5 py-0.5 font-mono text-[0.8125rem] text-success"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (linkMatch) {
+      return (
+        <a
+          key={i}
+          href={linkMatch[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-lehman-bright underline decoration-success/50 underline-offset-2 hover:text-white"
+        >
+          {linkMatch[1]}
+        </a>
+      );
+    }
+    return <Fragment key={i}>{part}</Fragment>;
+  });
 }
 
 export function RichText({ text }: { text: string }) {
@@ -66,20 +95,32 @@ export function RichText({ text }: { text: string }) {
   const isHeading = (i: number) =>
     blocks[i + 1]?.kind === "list" &&
     (blocks[i] as { text: string }).text.trimEnd().endsWith(":");
-  const isCallout = (i: number) => firstList !== -1 && i > firstList;
+  const isCallout = (i: number) => {
+    if (firstList === -1 || i <= firstList) return false;
+    const t = (blocks[i] as { text: string }).text.toLowerCase();
+    return (
+      t.includes("warning") ||
+      t.includes("certificate") ||
+      t.includes("note:") ||
+      t.startsWith("if you get")
+    );
+  };
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       {blocks.map((block, i) => {
         if (block.kind === "list") {
           return (
-            <ol key={i} className="space-y-2.5">
+            <ol key={i} className="my-2 space-y-2.5">
               {block.items.map((item, j) => (
-                <li key={j} className="flex gap-3">
-                  <span className="mt-px grid size-6 shrink-0 place-items-center rounded-full border border-success/40 bg-success/10 text-[0.75rem] font-semibold text-success">
+                <li
+                  key={j}
+                  className="flex items-start gap-3 rounded-xl border border-line-soft/60 bg-surface/50 p-2.5 transition-colors hover:bg-surface"
+                >
+                  <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border border-success/50 bg-success/15 text-[0.75rem] font-bold text-success shadow-[0_0_10px_rgba(34,197,94,0.2)]">
                     {item.marker}
                   </span>
-                  <span className="min-w-0 flex-1 whitespace-pre-wrap">
+                  <span className="min-w-0 flex-1 text-[0.9375rem] leading-6 text-off-white/95">
                     {inline(item.text)}
                   </span>
                 </li>
@@ -89,21 +130,31 @@ export function RichText({ text }: { text: string }) {
         }
 
         if (isCallout(i)) {
+          const isWarning =
+            block.text.toLowerCase().includes("warning") ||
+            block.text.toLowerCase().includes("certificate") ||
+            block.text.toLowerCase().includes("note");
+
           return (
-            <p
+            <div
               key={i}
-              className="mt-3 rounded-2xl border border-line-soft bg-black/15 px-3.5 py-2.5 whitespace-pre-wrap text-off-white/90"
+              className={`mt-3 flex items-start gap-2.5 rounded-2xl border p-3 text-[0.875rem] leading-6 ${
+                isWarning
+                  ? "border-success/30 bg-success/10 text-off-white"
+                  : "border-line-soft bg-black/25 text-off-white/90"
+              }`}
             >
-              {inline(block.text)}
-            </p>
+              <CheckIcon className="mt-1 size-4 shrink-0 text-success" />
+              <div className="min-w-0 flex-1">{inline(block.text)}</div>
+            </div>
           );
         }
 
         return (
           <p
             key={i}
-            className={`whitespace-pre-wrap ${
-              isHeading(i) ? "font-semibold text-white" : ""
+            className={`whitespace-pre-wrap text-[0.9375rem] leading-6 text-off-white/95 ${
+              isHeading(i) ? "text-base font-semibold text-white" : ""
             }`}
           >
             {inline(block.text)}

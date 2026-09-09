@@ -4,6 +4,7 @@
   /* Palette — from the CampusIT Co-Pilot design system */
   --color-lehman: #007a41;
   --color-lehman-bright: #02b763;
+  --color-lehman-dark: #005a30;
   --color-deep: #0f2a1d;
   --color-charcoal: #141d19;
   --color-light-green: #8ea096;
@@ -15,28 +16,30 @@
   --color-bg: #061513;
   --color-surface: #0a1f1b;
   --color-surface-2: #0d2620;
+  --color-surface-card: #0c231c;
   --color-line: #16382e;
   --color-line-soft: #113028;
+  --color-line-glow: rgba(2, 183, 99, 0.25);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    "SF Pro Text", "Segoe UI", sans-serif;
+    "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --radius-bubble: 1.25rem;
 }
 
 html {
   color-scheme: dark;
-  /* Keep our own type scale on rotation instead of iOS inflating it. */
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Every control is at least a 48px touch target on touch devices. */
+/* Touch targets and mobile ergonomics */
 @media (pointer: coarse) {
   button,
   a[href],
   textarea,
   [role="button"] {
-    min-height: 3rem;
+    min-height: 2.75rem;
   }
 }
 
@@ -45,70 +48,157 @@ body {
   color: var(--color-off-white);
   font-family: var(--font-sans);
   overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* The soft green glow that sits behind every screen in the design */
+/* Atmospheric green gradients */
 .bg-glow {
   background:
-    radial-gradient(80% 55% at 50% -10%, rgba(0, 122, 65, 0.28), transparent 70%),
-    radial-gradient(60% 45% at 100% 100%, rgba(2, 183, 99, 0.08), transparent 70%),
+    radial-gradient(100% 60% at 50% 0%, rgba(0, 122, 65, 0.32), transparent 70%),
+    radial-gradient(80% 50% at 100% 100%, rgba(2, 183, 99, 0.1), transparent 70%),
     var(--color-bg);
 }
 
 .bg-splash {
   background:
-    radial-gradient(72% 48% at 50% 22%, rgba(6, 168, 96, 0.45), transparent 72%),
+    radial-gradient(85% 55% at 50% 18%, rgba(2, 183, 99, 0.42), transparent 72%),
+    radial-gradient(60% 40% at 50% 85%, rgba(0, 122, 65, 0.25), transparent 70%),
     linear-gradient(180deg, #0d4a31 0%, #07301f 45%, #041a12 100%);
 }
 
 .ring-glow {
   box-shadow:
-    0 0 0 1px rgba(34, 197, 94, 0.18),
-    0 0 24px -6px rgba(2, 183, 99, 0.35);
+    0 0 0 1px rgba(34, 197, 94, 0.22),
+    0 0 24px -6px rgba(2, 183, 99, 0.38);
+}
+
+.card-glass {
+  background: rgba(12, 35, 28, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-line);
+}
+
+.card-glass-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-glass-hover:hover {
+  background: rgba(15, 42, 29, 0.85);
+  border-color: rgba(2, 183, 99, 0.35);
+  transform: translateY(-1px);
+}
+.card-glass-hover:active {
+  transform: scale(0.98);
 }
 
 .btn-primary {
   background: linear-gradient(180deg, #05a45a 0%, #007a41 100%);
   box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.14) inset,
-    0 6px 20px -8px rgba(2, 183, 99, 0.7);
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 6px 20px -6px rgba(2, 183, 99, 0.65);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 2px 10px -4px rgba(2, 183, 99, 0.5);
 }
 
-/* The chat occupies exactly the visible viewport. The composer is a flex child
-   at its bottom edge, so it cannot scroll out of view and needs no sticky or
-   fixed positioning (both of which misbehave on iOS Safari).
-   --app-h is set from visualViewport where the browser keeps the layout
-   viewport at full height while the keyboard is open. */
+/* Mobile-first viewport shell */
 .app-shell {
   height: 100dvh;
   height: var(--app-h, 100dvh);
 }
 
-/* Scrollbars stay out of the way but keep the green cast */
+/* Hide scrollbars for horizontal carousel while keeping scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Thin vertical scrollbars */
 .scroll-thin {
   scrollbar-width: thin;
   scrollbar-color: #1c4a3c transparent;
 }
 .scroll-thin::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .scroll-thin::-webkit-scrollbar-thumb {
   background: #1c4a3c;
   border-radius: 999px;
 }
 
+/* Animations */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: translateY(0);
   }
 }
 .animate-rise {
-  animation: rise 0.22s ease-out both;
+  animation: rise 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUpSheet {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slideUpSheet 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out both;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.15);
+  }
+}
+.animate-pulse-glow {
+  animation: pulseGlow 2.4s infinite ease-in-out;
+}
+
+@keyframes floatMascot {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.animate-float {
+  animation: floatMascot 3.2s ease-in-out infinite;
 }
 
 @keyframes blink {
