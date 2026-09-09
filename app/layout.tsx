@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CampusIT Co-Pilot — unofficial Lehman College tech help",
+  title: "CampusIT Co-Pilot · unofficial Lehman College tech help",
   description:
-    "Unofficial, student-built AI helper for Lehman College tech problems — Wi-Fi, login, CUNYfirst and student email. No line. Just chat.",
+    "Unofficial, student-built AI helper for Lehman College tech problems: Wi-Fi, login, CUNYfirst and student email. No line. Just chat.",
 };
 
 export const viewport: Viewport = {

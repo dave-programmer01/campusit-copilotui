@@ -20,7 +20,7 @@ export default function Home() {
         </p>
 
         <p className="mt-7 text-[16px] leading-7 text-off-white/90">
-          Your AI assistant for Lehman College tech problems — Wi-Fi, CUNYfirst,
+          Your AI assistant for Lehman College tech problems: Wi-Fi, CUNYfirst,
           and student email. No line. Just chat.
         </p>
 

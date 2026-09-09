@@ -100,7 +100,7 @@ export function ResolvedCard({ at }: { at: number }) {
         <div className="flex items-center gap-3">
           <BeeAvatar className="size-11" />
           <p className="text-[16px] leading-6 font-semibold text-white">
-            logged — one less person in line 🎉
+            logged, one less person in line 🎉
           </p>
         </div>
         <p className="mt-2 text-[14px] text-light-green">
@@ -127,7 +127,7 @@ export function RealPersonCard() {
             <BuildingIcon className="size-6" />
           </span>
           <p className="text-[14px] leading-6 text-off-white/90">
-            no worries — you can go to{" "}
+            no worries, you can go to{" "}
             <span className="font-semibold text-success">LehmanQ</span> (online)
             or <span className="font-semibold text-white">Carman Hall 108</span>{" "}
             (in person).
@@ -154,7 +154,7 @@ export function RealPersonCard() {
           </a>
         </div>
         <p className="mt-3 text-center text-[13px] text-light-green">
-          you&apos;re not alone — we got you. 💚
+          you&apos;re not alone, we got you. 💚
         </p>
       </div>
     </div>

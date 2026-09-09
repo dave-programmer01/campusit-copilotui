@@ -30,7 +30,7 @@ const GREETING: Msg = {
   id: "greeting",
   role: "assistant",
   content:
-    "hey 👋 i'm your campus tech co-pilot — unofficial, student-built.\nwhat's giving you trouble? wifi, logging in, CUNYfirst, or email?",
+    "hey 👋 i'm your campus tech co-pilot, unofficial and student-built.\nwhat's giving you trouble? wifi, logging in, CUNYfirst, or email?",
   at: 0,
 };
 
@@ -420,7 +420,7 @@ function AboutCard() {
         <p className="font-semibold text-white">about this thing</p>
         <p className="mt-1.5 text-off-white/90">
           i&apos;m an <span className="font-semibold">unofficial, student-built</span>{" "}
-          helper for Lehman College tech problems — not run by Lehman IT. i walk
+          helper for Lehman College tech problems, not run by Lehman IT. i walk
           you through wifi, login, CUNYfirst and email fixes so you don&apos;t
           have to stand in line.
         </p>
@@ -467,10 +467,10 @@ function ErrorCard({
       </div>
       <p className="mt-2 text-[14px] leading-6 text-light-green">
         {rate
-          ? `one sec, too many messages — try again in ${
+          ? `one sec, too many messages. try again in ${
               error.retryAfter ? `${error.retryAfter}s` : "a moment"
             }.`
-          : "my connection dropped — mind resending that?"}
+          : "my connection dropped. mind resending that?"}
       </p>
       <button
         type="button"
