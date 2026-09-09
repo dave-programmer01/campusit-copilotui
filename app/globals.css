@@ -26,7 +26,18 @@
 
 html {
   color-scheme: dark;
+  /* Keep our own type scale on rotation instead of iOS inflating it. */
   -webkit-text-size-adjust: 100%;
+}
+
+/* Every control is at least a 48px touch target on touch devices. */
+@media (pointer: coarse) {
+  button,
+  a[href],
+  textarea,
+  [role="button"] {
+    min-height: 3rem;
+  }
 }
 
 body {
@@ -61,35 +72,6 @@ body {
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.14) inset,
     0 6px 20px -8px rgba(2, 183, 99, 0.7);
-}
-
-/* Full-screen chat shell. --app-h tracks the visual viewport on browsers that
-   do not resize the layout viewport for the on-screen keyboard (iOS Safari). */
-.app-shell {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100dvh;
-  height: var(--app-h, 100dvh);
-  /* iOS anchors fixed elements to the layout viewport, but the student is
-     looking at the visual viewport offset inside it. Without this shift the
-     shell rides up under the URL bar and leaves a gap above the toolbar. */
-  transform: translateY(var(--app-top, 0px));
-}
-
-/* The chat view locks the document so only the transcript scrolls.
-   iOS Safari resolves percentage heights against the *large* viewport (toolbars
-   hidden), which leaves html/body taller than the visible area and lets the
-   whole app drag up under the URL bar. Taking body out of flow removes that
-   surplus; overflow alone is not reliably honoured on iOS. */
-html.app-locked,
-html.app-locked body {
-  position: fixed;
-  inset: 0;
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
 }
 
 /* Scrollbars stay out of the way but keep the green cast */

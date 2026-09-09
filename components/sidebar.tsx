@@ -40,10 +40,10 @@ export function Sidebar({
           <Bee className="size-8" />
         </span>
         <div className="min-w-0">
-          <p className="truncate text-[15px] font-semibold text-white">
+          <p className="truncate text-[0.9375rem] font-semibold text-white">
             CampusIT Co-Pilot
           </p>
-          <p className="truncate text-[12px] text-light-green">
+          <p className="truncate text-[0.75rem] text-light-green">
             unofficial · student-built
           </p>
         </div>
@@ -58,7 +58,7 @@ export function Sidebar({
               type="button"
               onClick={() => onNavigate(key)}
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-[15px] transition ${
+              className={`flex min-h-12 items-center gap-3 rounded-2xl px-3 py-3 text-[0.9375rem] transition ${
                 isActive
                   ? "border border-success/25 bg-success/12 font-medium text-white"
                   : "border border-transparent text-off-white/80 hover:bg-white/5"
@@ -72,21 +72,21 @@ export function Sidebar({
       </nav>
 
       <div className="mt-auto rounded-2xl border border-line bg-black/20 p-3.5">
-        <p className="text-[13px] font-semibold text-white">
+        <p className="text-[0.8125rem] font-semibold text-white">
           Need to talk to a real person?
         </p>
         <a
           href="https://www.lehman.edu/q"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 flex items-center gap-3 rounded-xl px-1 py-1.5 transition hover:bg-white/5"
+          className="mt-2 flex min-h-12 items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5"
         >
           <BuildingIcon className="size-6 shrink-0 text-success" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13px] text-off-white">
+            <span className="block truncate text-[0.8125rem] text-off-white">
               LehmanQ <span className="text-success">(online)</span>
             </span>
-            <span className="block truncate text-[11px] text-light-green">
+            <span className="block truncate text-[0.6875rem] text-light-green">
               lehman.edu/q
             </span>
           </span>
@@ -96,14 +96,14 @@ export function Sidebar({
           href="https://maps.google.com/?q=Carman+Hall+Lehman+College+Bronx+NY"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 flex items-center gap-3 rounded-xl px-1 py-1.5 transition hover:bg-white/5"
+          className="mt-1 flex min-h-12 items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5"
         >
           <PinIcon className="size-6 shrink-0 text-success" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13px] text-off-white">
+            <span className="block truncate text-[0.8125rem] text-off-white">
               Carman Hall 108
             </span>
-            <span className="block truncate text-[11px] text-light-green">
+            <span className="block truncate text-[0.6875rem] text-light-green">
               (in person)
             </span>
           </span>

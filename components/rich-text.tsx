@@ -76,7 +76,7 @@ export function RichText({ text }: { text: string }) {
             <ol key={i} className="space-y-2.5">
               {block.items.map((item, j) => (
                 <li key={j} className="flex gap-3">
-                  <span className="mt-px grid size-6 shrink-0 place-items-center rounded-full border border-success/40 bg-success/10 text-[12px] font-semibold text-success">
+                  <span className="mt-px grid size-6 shrink-0 place-items-center rounded-full border border-success/40 bg-success/10 text-[0.75rem] font-semibold text-success">
                     {item.marker}
                   </span>
                   <span className="min-w-0 flex-1 whitespace-pre-wrap">

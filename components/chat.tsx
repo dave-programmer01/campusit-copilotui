@@ -89,7 +89,7 @@ export function Chat() {
   const [nav, setNav] = useState<NavKey>("home");
   const [drawer, setDrawer] = useState(false);
   const [deflectBusy, setDeflectBusy] = useState(false);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [composerFocused, setComposerFocused] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [topic, setTopic] = useState<string | undefined>();
   const [device, setDevice] = useState<string | undefined>();
@@ -109,63 +109,6 @@ export function Chat() {
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [items, pending, error]);
-
-  // Only the transcript scrolls; the page itself must not.
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.add("app-locked");
-    return () => root.classList.remove("app-locked");
-  }, []);
-
-  // iOS Safari ignores interactive-widget: it leaves the layout viewport at full
-  // height when the keyboard opens, which would strand the composer behind it.
-  // Track the visual viewport instead so the shell shrinks to what is on screen.
-  useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-
-    const root = document.documentElement;
-
-    // Safari can scroll the layout viewport when the keyboard opens, leaving the
-    // shell's top edge off screen.
-    const pinToTop = () => {
-      if (window.scrollY !== 0) window.scrollTo(0, 0);
-    };
-
-    // Track both the size of the visible band and where it sits.
-    const setGeometry = () => {
-      root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
-      root.style.setProperty("--app-top", `${Math.round(vv.offsetTop)}px`);
-    };
-
-    const onResize = () => {
-      setGeometry();
-      pinToTop();
-      // Wait for the shell to reflow at its new height before scrolling, or the
-      // transcript lands on the old bottom.
-      requestAnimationFrame(() =>
-        bottom.current?.scrollIntoView({ block: "end" }),
-      );
-      // A viewport much shorter than the window means the keyboard is up.
-      setKeyboardOpen(vv.height < window.innerHeight - 100);
-    };
-
-    // offsetTop changes arrive as visual-viewport scrolls, not resizes.
-    const onScroll = () => {
-      setGeometry();
-      pinToTop();
-    };
-
-    setGeometry();
-    vv.addEventListener("resize", onResize);
-    vv.addEventListener("scroll", onScroll);
-    return () => {
-      vv.removeEventListener("resize", onResize);
-      vv.removeEventListener("scroll", onScroll);
-      root.style.removeProperty("--app-h");
-      root.style.removeProperty("--app-top");
-    };
-  }, []);
 
   const push = useCallback((item: Item) => setItems((v) => [...v, item]), []);
 
@@ -283,7 +226,7 @@ export function Chat() {
     (i) => i.kind === "msg" && i.msg.role === "assistant" && i.msg.id !== "greeting",
   ).length;
   const showCard = !answered && assistantTurns >= 3 && !pending;
-  const showBar = !answered && assistantTurns >= 2 && !showCard && !keyboardOpen;
+  const showBar = !answered && assistantTurns >= 2 && !showCard && !composerFocused;
 
   const lastItem = items[items.length - 1];
   const chips =
@@ -295,9 +238,9 @@ export function Chat() {
       : [];
 
   return (
-    <div className="app-shell flex bg-glow">
+    <div className="flex min-h-[100dvh] flex-col bg-glow lg:h-[100dvh] lg:min-h-0 lg:flex-row">
       {/* Sidebar — permanent on desktop, drawer on mobile */}
-      <aside className="hidden w-[264px] shrink-0 border-r border-line bg-surface/60 lg:block">
+      <aside className="hidden w-[16.5rem] shrink-0 border-r border-line bg-surface/60 lg:block">
         <Sidebar active={nav} onNavigate={onNavigate} />
       </aside>
 
@@ -315,29 +258,29 @@ export function Chat() {
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-line bg-surface/70 px-4 py-3 backdrop-blur">
+      <div className="flex min-w-0 flex-1 flex-col lg:h-full lg:overflow-hidden">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface px-4 py-3 lg:static">
           <button
             type="button"
             onClick={() => setDrawer(true)}
             aria-label="Open menu"
-            className="-ml-1 grid size-9 place-items-center rounded-xl text-off-white/80 transition hover:bg-white/5 lg:hidden"
+            className="-ml-2 grid size-12 place-items-center rounded-xl text-off-white/80 transition hover:bg-white/5 lg:hidden"
           >
             <MenuIcon className="size-5" />
           </button>
           <BeeAvatar className="size-10" />
           <div className="min-w-0">
-            <p className="flex items-center gap-2 truncate text-[15px] font-semibold text-white">
+            <p className="flex items-center gap-2 truncate text-[0.9375rem] font-semibold text-white">
               CampusIT Co-Pilot
               <span className="size-1.5 shrink-0 rounded-full bg-success" />
             </p>
-            <p className="truncate text-[12px] text-light-green">
+            <p className="truncate text-[0.75rem] text-light-green">
               unofficial · student-built
             </p>
           </div>
         </header>
 
-        <main className="scroll-thin flex-1 overflow-y-auto px-4 py-5">
+        <main className="scroll-thin flex-1 px-4 py-5 lg:min-h-0 lg:overflow-y-auto">
           <div className="mx-auto flex max-w-[720px] flex-col gap-4">
             {items.map((item) => {
               switch (item.kind) {
@@ -370,7 +313,7 @@ export function Chat() {
           </div>
         </main>
 
-        <footer className="border-t border-line bg-surface/70 px-4 py-3 backdrop-blur">
+        <footer className="sticky bottom-0 z-20 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:static lg:pb-3">
           <div className="mx-auto flex max-w-[720px] flex-col gap-2.5">
             {showBar && (
               <DeflectionBar onAnswer={answerDeflection} busy={deflectBusy} />
@@ -394,13 +337,15 @@ export function Chat() {
                 }}
                 placeholder="Type your message..."
                 aria-label="Message"
-                className="scroll-thin max-h-32 min-h-[52px] flex-1 resize-none rounded-3xl border border-line bg-black/25 px-5 py-3.5 text-[15px] leading-6 text-off-white placeholder:text-light-green/70 focus:border-success/50 focus:outline-none"
+                onFocus={() => setComposerFocused(true)}
+                onBlur={() => setComposerFocused(false)}
+                className="scroll-thin max-h-32 min-h-12 flex-1 resize-none rounded-3xl border border-line bg-black/25 px-4 py-3 text-base leading-6 text-off-white placeholder:text-light-green/70 focus:border-success/50 focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={!draft.trim() || pending}
                 aria-label="Send"
-                className="btn-primary grid size-13 shrink-0 place-items-center rounded-full text-white transition disabled:opacity-40"
+                className="btn-primary grid size-12 shrink-0 place-items-center rounded-full text-white transition disabled:opacity-40"
               >
                 <SendIcon className="size-5" />
               </button>
@@ -416,7 +361,7 @@ function AboutCard() {
   return (
     <div className="flex animate-rise items-start gap-2.5">
       <BeeAvatar className="mt-0.5 size-9" />
-      <div className="max-w-[520px] rounded-bubble rounded-tl-md border border-line bg-deep px-4 py-3.5 text-[15px] leading-6 text-off-white">
+      <div className="max-w-[520px] rounded-bubble rounded-tl-md border border-line bg-deep px-4 py-3.5 text-[0.9375rem] leading-6 text-off-white">
         <p className="font-semibold text-white">about this thing</p>
         <p className="mt-1.5 text-off-white/90">
           i&apos;m an <span className="font-semibold">unofficial, student-built</span>{" "}
@@ -442,7 +387,7 @@ function ErrorCard({
 }) {
   if (error.kind === "config") {
     return (
-      <div className="animate-rise rounded-2xl border border-error/40 bg-error/10 p-4 text-[14px] text-off-white">
+      <div className="animate-rise rounded-2xl border border-error/40 bg-error/10 p-4 text-[0.875rem] text-off-white">
         <p className="font-semibold">not wired up yet</p>
         <p className="mt-1 text-off-white/85">
           set <code className="text-success">NEXT_PUBLIC_API_BASE_URL</code> to
@@ -461,11 +406,11 @@ function ErrorCard({
         ) : (
           <WifiIcon className="size-5" />
         )}
-        <p className="text-[15px] font-semibold">
+        <p className="text-[0.9375rem] font-semibold">
           {rate ? "Rate limit" : "Connection error"}
         </p>
       </div>
-      <p className="mt-2 text-[14px] leading-6 text-light-green">
+      <p className="mt-2 text-[0.875rem] leading-6 text-light-green">
         {rate
           ? `one sec, too many messages. try again in ${
               error.retryAfter ? `${error.retryAfter}s` : "a moment"
@@ -475,7 +420,7 @@ function ErrorCard({
       <button
         type="button"
         onClick={onRetry}
-        className="mt-3 flex items-center gap-2 rounded-full border border-success/45 px-4 py-2 text-[14px] font-medium text-off-white transition hover:bg-success/10"
+        className="mt-3 inline-flex min-h-12 items-center gap-2 rounded-full border border-success/45 px-5 text-[0.875rem] font-medium text-off-white transition hover:bg-success/10"
       >
         <RefreshIcon className="size-4" />
         {rate ? "Try again" : "Retry"}

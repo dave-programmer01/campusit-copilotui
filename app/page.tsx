@@ -4,35 +4,35 @@ import { ArrowIcon, BuildingIcon } from "@/components/icons";
 
 export default function Home() {
   return (
-    <main className="bg-splash relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-12 text-center">
+    <main className="bg-splash relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-8 text-center sm:py-12">
       <CampusSilhouette />
 
       <div className="relative flex w-full max-w-[420px] flex-col items-center">
-        <Bee className="size-28 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] sm:size-32" />
+        <Bee className="size-24 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] sm:size-32" />
 
-        <h1 className="mt-6 text-[38px] leading-[1.1] font-bold tracking-tight text-white sm:text-[44px]">
+        <h1 className="mt-5 text-[2.125rem] sm:mt-6 sm:text-[2.375rem] leading-[1.1] font-bold tracking-tight text-white sm:text-[2.75rem]">
           CampusIT
           <br />
           Co-Pilot
         </h1>
-        <p className="mt-3 text-[15px] tracking-[0.04em] text-off-white/75">
+        <p className="mt-3 text-[0.9375rem] tracking-[0.04em] text-off-white/75">
           unofficial · student-built
         </p>
 
-        <p className="mt-7 text-[16px] leading-7 text-off-white/90">
+        <p className="mt-5 text-[1rem] leading-7 sm:mt-7 text-off-white/90">
           Your AI assistant for Lehman College tech problems: Wi-Fi, CUNYfirst,
           and student email. No line. Just chat.
         </p>
 
         <Link
           href="/chat"
-          className="btn-primary mt-9 flex w-full items-center justify-center gap-2.5 rounded-full px-8 py-4 text-[17px] font-semibold text-white"
+          className="btn-primary mt-7 flex w-full sm:mt-9 items-center justify-center gap-2.5 rounded-full px-8 py-4 text-[1.0625rem] font-semibold text-white"
         >
           Start chatting
           <ArrowIcon className="size-5" />
         </Link>
 
-        <p className="mt-10 flex items-center gap-2 text-[14px] text-off-white/70">
+        <p className="mt-7 flex items-center gap-2 sm:mt-10 text-[0.875rem] text-off-white/70">
           <BuildingIcon className="size-5" />
           Lehman College
         </p>
