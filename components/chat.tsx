@@ -38,7 +38,7 @@ const GREETING: Msg = {
   id: "greeting",
   role: "assistant",
   content:
-    "hey 👋 i'm your campus tech co-pilot, unofficial and student-built.\nwhat's giving you trouble? wifi, logging in, CUNYfirst, or email?",
+    "hey  i'm your campus tech co-pilot, unofficial and student-built.\nwhat's giving you trouble? wifi, logging in, CUNYfirst, or email?",
   at: 0,
 };
 
@@ -58,10 +58,10 @@ const SEEDS: Partial<Record<NavKey, { text: string; topic?: string }>> = {
 };
 
 const COMMON_PROMPTS = [
-  { label: "📶 Fix Lehman Wi-Fi", text: "i can't connect to campus wifi (eduroam)" },
-  { label: "🔐 Reset Password", text: "how do i reset my lehman login password?" },
-  { label: "📧 Student 365 Email", text: "i'm having trouble accessing my lehman student email" },
-  { label: "🏛️ CUNYfirst Help", text: "i can't access CUNYfirst" },
+  { label: " Fix Lehman Wi-Fi", text: "i can't connect to campus wifi (eduroam)" },
+  { label: " Reset Password", text: "how do i reset my lehman login password?" },
+  { label: " Student 365 Email", text: "i'm having trouble accessing my lehman student email" },
+  { label: "CUNYfirst Help", text: "i can't access CUNYfirst" },
 ];
 
 const DEVICES = ["MacBook", "Windows", "iPhone", "Android"];
