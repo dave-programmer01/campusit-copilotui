@@ -70,6 +70,20 @@ body {
   height: var(--app-h, 100dvh);
 }
 
+/* The chat view locks the document so only the transcript scrolls.
+   iOS Safari resolves percentage heights against the *large* viewport (toolbars
+   hidden), which leaves html/body taller than the visible area and lets the
+   whole app drag up under the URL bar. Taking body out of flow removes that
+   surplus; overflow alone is not reliably honoured on iOS. */
+html.app-locked,
+html.app-locked body {
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* Scrollbars stay out of the way but keep the green cast */
 .scroll-thin {
   scrollbar-width: thin;

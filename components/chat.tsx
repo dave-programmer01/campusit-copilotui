@@ -110,6 +110,13 @@ export function Chat() {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [items, pending, error]);
 
+  // Only the transcript scrolls; the page itself must not.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add("app-locked");
+    return () => root.classList.remove("app-locked");
+  }, []);
+
   // iOS Safari ignores interactive-widget: it leaves the layout viewport at full
   // height when the keyboard opens, which would strand the composer behind it.
   // Track the visual viewport instead so the shell shrinks to what is on screen.
