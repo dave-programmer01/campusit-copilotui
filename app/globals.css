@@ -63,6 +63,13 @@ body {
     0 6px 20px -8px rgba(2, 183, 99, 0.7);
 }
 
+/* Full-screen chat shell. --app-h tracks the visual viewport on browsers that
+   do not resize the layout viewport for the on-screen keyboard (iOS Safari). */
+.app-shell {
+  height: 100dvh;
+  height: var(--app-h, 100dvh);
+}
+
 /* Scrollbars stay out of the way but keep the green cast */
 .scroll-thin {
   scrollbar-width: thin;

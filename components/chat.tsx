@@ -89,6 +89,7 @@ export function Chat() {
   const [nav, setNav] = useState<NavKey>("home");
   const [drawer, setDrawer] = useState(false);
   const [deflectBusy, setDeflectBusy] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [topic, setTopic] = useState<string | undefined>();
   const [device, setDevice] = useState<string | undefined>();
@@ -108,6 +109,49 @@ export function Chat() {
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [items, pending, error]);
+
+  // iOS Safari ignores interactive-widget: it leaves the layout viewport at full
+  // height when the keyboard opens, which would strand the composer behind it.
+  // Track the visual viewport instead so the shell shrinks to what is on screen.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const root = document.documentElement;
+
+    // Safari can scroll the layout viewport when the keyboard opens, leaving the
+    // shell's top edge off screen.
+    const pinToTop = () => {
+      if (window.scrollY !== 0) window.scrollTo(0, 0);
+    };
+
+    const setHeight = () => {
+      root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
+    };
+
+    const onResize = () => {
+      setHeight();
+      pinToTop();
+      // Wait for the shell to reflow at its new height before scrolling, or the
+      // transcript lands on the old bottom.
+      requestAnimationFrame(() =>
+        bottom.current?.scrollIntoView({ block: "end" }),
+      );
+      // A viewport much shorter than the window means the keyboard is up.
+      setKeyboardOpen(vv.height < window.innerHeight - 100);
+    };
+
+    setHeight();
+    vv.addEventListener("resize", onResize);
+    // Only correct the offset here — height is unchanged, and forcing a scroll
+    // would fight the student panning a pinch-zoomed page.
+    vv.addEventListener("scroll", pinToTop);
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", pinToTop);
+      root.style.removeProperty("--app-h");
+    };
+  }, []);
 
   const push = useCallback((item: Item) => setItems((v) => [...v, item]), []);
 
@@ -225,7 +269,7 @@ export function Chat() {
     (i) => i.kind === "msg" && i.msg.role === "assistant" && i.msg.id !== "greeting",
   ).length;
   const showCard = !answered && assistantTurns >= 3 && !pending;
-  const showBar = !answered && assistantTurns >= 2 && !showCard;
+  const showBar = !answered && assistantTurns >= 2 && !showCard && !keyboardOpen;
 
   const lastItem = items[items.length - 1];
   const chips =
@@ -237,7 +281,7 @@ export function Chat() {
       : [];
 
   return (
-    <div className="flex h-dvh bg-glow">
+    <div className="app-shell flex bg-glow">
       {/* Sidebar — permanent on desktop, drawer on mobile */}
       <aside className="hidden w-[264px] shrink-0 border-r border-line bg-surface/60 lg:block">
         <Sidebar active={nav} onNavigate={onNavigate} />
