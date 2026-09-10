@@ -116,12 +116,6 @@ export const ChevronIcon = (p: IconProps) => (
   </Svg>
 );
 
-export const ChevronDownIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="m6 9 6 6 6-6" />
-  </Svg>
-);
-
 export const ArrowIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4.5 12h14M13 6.5 18.5 12 13 17.5" />
@@ -151,43 +145,5 @@ export const UserIcon = (p: IconProps) => (
 export const RefreshIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M20 12a8 8 0 1 1-2.6-5.9M20 4.5V10h-5.5" />
-  </Svg>
-);
-
-export const SparklesIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="m12 3 2.2 5.3L19.5 10.5l-5.3 2.2L12 18l-2.2-5.3L4.5 10.5l5.3-2.2L12 3Z" />
-    <path d="M18.5 16.5 19.5 19l2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" />
-  </Svg>
-);
-
-export const PlusIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 5v14M5 12h14" strokeWidth="2" />
-  </Svg>
-);
-
-export const CopyIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <rect width="13" height="13" x="8" y="8" rx="2" ry="2" />
-    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-  </Svg>
-);
-
-export const MessageSquareIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </Svg>
-);
-
-export const LifeBuoyIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <circle cx="12" cy="12" r="10" />
-    <circle cx="12" cy="12" r="4" />
-    <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" />
-    <line x1="14.83" y1="14.83" x2="19.07" y2="19.07" />
-    <line x1="14.83" y1="9.17" x2="19.07" y2="4.93" />
-    <line x1="14.83" y1="9.17" x2="18.36" y2="5.64" />
-    <line x1="4.93" y1="19.07" x2="9.17" y2="14.83" />
   </Svg>
 );
