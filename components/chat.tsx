@@ -110,21 +110,43 @@ export function Chat() {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [items, pending, error]);
 
-  // iOS keeps the layout viewport at full height while the keyboard is open, so
-  // bind the shell to the height that is actually on screen. Height only: no
-  // scroll locking, no offset maths.
+  // The chat fills the screen, so the document itself must never scroll. iOS
+  // keeps the layout viewport at full height while the keyboard is open and
+  // scrolls the page to reveal the focused composer, which would push the header
+  // and transcript off screen and leave the composer stranded at the top.
   useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
     const root = document.documentElement;
-    const apply = () => {
-      root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
+    const prevRoot = root.style.overflow;
+    const prevBody = document.body.style.overflow;
+    root.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    // Belt and braces: if anything does scroll the page, put it straight back.
+    const pin = () => {
+      if (window.scrollY !== 0) window.scrollTo(0, 0);
     };
+    window.addEventListener("scroll", pin, { passive: true });
+
+    const vv = window.visualViewport;
+    const apply = () => {
+      // Bind the shell to the height actually on screen, so the composer sits
+      // above the keyboard rather than behind it.
+      if (vv) root.style.setProperty("--app-h", `${Math.round(vv.height)}px`);
+      pin();
+      // Safari can scroll again after its own resize; undo that too.
+      requestAnimationFrame(pin);
+    };
+
     apply();
-    vv.addEventListener("resize", apply);
+    vv?.addEventListener("resize", apply);
+    vv?.addEventListener("scroll", pin);
     return () => {
-      vv.removeEventListener("resize", apply);
+      vv?.removeEventListener("resize", apply);
+      vv?.removeEventListener("scroll", pin);
+      window.removeEventListener("scroll", pin);
       root.style.removeProperty("--app-h");
+      root.style.overflow = prevRoot;
+      document.body.style.overflow = prevBody;
     };
   }, []);
 
