@@ -8,12 +8,7 @@ import {
   sendDeflection,
 } from "@/lib/api";
 import { BeeAvatar } from "./bee";
-import {
-  DeflectionBar,
-  DeflectionCard,
-  RealPersonCard,
-  ResolvedCard,
-} from "./deflection";
+import { DeflectionControl, type DeflectionResult } from "./deflection";
 import {
   ClockIcon,
   MenuIcon,
@@ -36,9 +31,6 @@ const GREETING: Msg = {
 
 type Item =
   | { kind: "msg"; msg: Msg }
-  | { kind: "deflect-ask"; id: string }
-  | { kind: "deflect-yes"; id: string; at: number }
-  | { kind: "deflect-no"; id: string; at: number }
   | { kind: "about"; id: string };
 
 type ErrState = { kind: "network" | "rate" | "config"; retryAfter?: number };
@@ -89,12 +81,16 @@ export function Chat() {
   const [nav, setNav] = useState<NavKey>("home");
   const [drawer, setDrawer] = useState(false);
   const [deflectBusy, setDeflectBusy] = useState(false);
-  const [composerFocused, setComposerFocused] = useState(false);
-  const [answered, setAnswered] = useState(false);
+  const [deflectResult, setDeflectResult] = useState<DeflectionResult | null>(
+    null,
+  );
   const [topic, setTopic] = useState<string | undefined>();
   const [device, setDevice] = useState<string | undefined>();
 
   const lastSent = useRef<string>("");
+  // State updates are batched, so three fast taps would all read the same stale
+  // value and post three times. A ref flips synchronously on the first tap.
+  const deflectLock = useRef(false);
   const bottom = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -206,23 +202,22 @@ export function Chat() {
 
   const answerDeflection = useCallback(
     async (resolved: boolean) => {
-      if (!conversationId || deflectBusy) return;
+      // Guard against a double tap recording the same session twice.
+      if (!conversationId || deflectLock.current) return;
+      deflectLock.current = true;
       setDeflectBusy(true);
       try {
         await sendDeflection({ conversationId, resolved, topic, device });
-        setAnswered(true);
-        push(
-          resolved
-            ? { kind: "deflect-yes", id: nextId(), at: Date.now() }
-            : { kind: "deflect-no", id: nextId(), at: Date.now() },
-        );
+        setDeflectResult(resolved ? "yes" : "no");
       } catch {
+        // Let them try again rather than losing the answer to a dropped request.
+        deflectLock.current = false;
         setError({ kind: "network" });
       } finally {
         setDeflectBusy(false);
       }
     },
-    [conversationId, deflectBusy, device, push, topic],
+    [conversationId, device, topic],
   );
 
   const onNavigate = useCallback(
@@ -234,7 +229,8 @@ export function Chat() {
         const id = crypto.randomUUID();
         persistId(id);
         setItems([{ kind: "msg", msg: GREETING }]);
-        setAnswered(false);
+        setDeflectResult(null);
+        deflectLock.current = false;
         setError(null);
         setTopic(undefined);
         setDevice(undefined);
@@ -261,19 +257,16 @@ export function Chat() {
     [send],
   );
 
-  // The deflection card lands in the transcript once a walkthrough has happened.
-  const assistantTurns = items.filter(
-    (i) => i.kind === "msg" && i.msg.role === "assistant" && i.msg.id !== "greeting",
-  ).length;
-  const showCard = !answered && assistantTurns >= 3 && !pending;
-  const showBar = !answered && assistantTurns >= 2 && !showCard && !composerFocused;
+  // Shown once a real conversation is underway, then for the rest of it.
+  const hasUserSpoken = items.some(
+    (i) => i.kind === "msg" && i.msg.role === "user",
+  );
 
   const lastItem = items[items.length - 1];
   const chips =
     lastItem?.kind === "msg" &&
     lastItem.msg.role === "assistant" &&
-    !pending &&
-    !showCard
+    !pending
       ? chipsFor(lastItem.msg.content)
       : [];
 
@@ -326,10 +319,6 @@ export function Chat() {
               switch (item.kind) {
                 case "msg":
                   return <MessageBubble key={item.msg.id} msg={item.msg} />;
-                case "deflect-yes":
-                  return <ResolvedCard key={item.id} at={item.at} />;
-                case "deflect-no":
-                  return <RealPersonCard key={item.id} />;
                 case "about":
                   return <AboutCard key={item.id} />;
                 default:
@@ -343,10 +332,6 @@ export function Chat() {
               <Chips options={chips} onPick={onChip} disabled={pending} />
             )}
 
-            {showCard && (
-              <DeflectionCard onAnswer={answerDeflection} busy={deflectBusy} />
-            )}
-
             {error && <ErrorCard error={error} onRetry={retry} />}
 
             <div ref={bottom} className="h-px" />
@@ -355,8 +340,12 @@ export function Chat() {
 
         <footer className="shrink-0 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mx-auto flex max-w-[720px] flex-col gap-2.5">
-            {showBar && (
-              <DeflectionBar onAnswer={answerDeflection} busy={deflectBusy} />
+            {hasUserSpoken && (
+              <DeflectionControl
+                result={deflectResult}
+                busy={deflectBusy}
+                onAnswer={answerDeflection}
+              />
             )}
             <form
               onSubmit={(e) => {
@@ -377,8 +366,6 @@ export function Chat() {
                 }}
                 placeholder="Type your message..."
                 aria-label="Message"
-                onFocus={() => setComposerFocused(true)}
-                onBlur={() => setComposerFocused(false)}
                 className="scroll-thin max-h-32 min-h-12 flex-1 resize-none rounded-3xl border border-line bg-black/25 px-4 py-3 text-base leading-6 text-off-white placeholder:text-light-green/70 focus:border-success/50 focus:outline-none"
               />
               <button
