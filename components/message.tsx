@@ -37,7 +37,7 @@ export function MessageBubble({ msg }: { msg: Msg }) {
     return (
       <div className="flex animate-rise justify-end">
         <div className="max-w-[82%] rounded-bubble rounded-br-md bg-off-white px-4 py-2.5 text-[0.9375rem] leading-6 text-[#101c18] shadow-lg shadow-black/20 sm:max-w-[70%]">
-          <p className="whitespace-pre-wrap">{msg.content}</p>
+          <p className="[overflow-wrap:anywhere] whitespace-pre-wrap">{msg.content}</p>
           {msg.at > 0 && (
             <span className="mt-0.5 flex items-center justify-end gap-1 text-[0.6875rem] text-[#5c6f68]">
               {formatTime(msg.at)}
@@ -83,12 +83,14 @@ export function TypingBubble() {
 }
 
 /** Tappable suggestions under a reply (device pickers, "still stuck", …). */
+export type Chip = { label: string; value: string };
+
 export function Chips({
   options,
   onPick,
   disabled,
 }: {
-  options: string[];
+  options: Chip[];
   onPick: (value: string) => void;
   disabled?: boolean;
 }) {
@@ -96,13 +98,13 @@ export function Chips({
     <div className="flex animate-rise flex-wrap gap-2 sm:pl-11.5">
       {options.map((option) => (
         <button
-          key={option}
+          key={option.label}
           type="button"
           disabled={disabled}
-          onClick={() => onPick(option)}
-          className="inline-flex min-h-12 items-center rounded-full border border-success/45 bg-success/5 px-5 text-[0.875rem] font-medium text-off-white transition hover:border-success hover:bg-success/15 disabled:opacity-40"
+          onClick={() => onPick(option.value)}
+          className="inline-flex min-h-12 max-w-full items-center rounded-full border border-success/45 bg-success/5 px-5 py-2 text-left text-[0.875rem] font-medium text-off-white transition hover:border-success hover:bg-success/15 disabled:opacity-40"
         >
-          {option}
+          {option.label}
         </button>
       ))}
     </div>

@@ -16,7 +16,13 @@ import {
   SendIcon,
   WifiIcon,
 } from "./icons";
-import { Chips, MessageBubble, TypingBubble, type Msg } from "./message";
+import {
+  Chips,
+  MessageBubble,
+  TypingBubble,
+  type Chip,
+  type Msg,
+} from "./message";
 import { Sidebar, type NavKey } from "./sidebar";
 
 const STORAGE_KEY = "campusit.conversationId";
@@ -25,7 +31,7 @@ const GREETING: Msg = {
   id: "greeting",
   role: "assistant",
   content:
-    "hey 👋 i'm your campus tech co-pilot, unofficial and student-built.\nwhat's giving you trouble? wifi, logging in, CUNYfirst, or email?",
+    "hey 👋 i'm your campus tech co-pilot, unofficial and student-built.\nwhat's giving you trouble, wifi, logging in, passwords, or MFA/authenticator?",
   at: 0,
 };
 
@@ -41,23 +47,55 @@ const SEEDS: Partial<Record<NavKey, { text: string; topic?: string }>> = {
   cunyfirst: { text: "i'm having trouble with CUNYfirst / my student email" },
 };
 
-const DEVICES = ["MacBook", "Windows", "iPhone", "Android"];
+const DEVICES = ["MacBook", "Windows 10", "Windows 11", "iPhone", "Android"];
+
+/** Shortcuts on the opening screen; each just sends text through /chat. */
+const QUICK_START: Chip[] = [
+  { label: "Wi-Fi won't connect", value: "my wifi won't connect" },
+  { label: "Reset my password", value: "i need to reset my password" },
+  { label: "Set up MFA / Authenticator", value: "i need to set up MFA" },
+  { label: "Can't log in", value: "i can't log in" },
+];
+
+const ACCOUNT_CHIPS: Chip[] = [
+  { label: "CUNY (CUNYfirst, Brightspace, Lehman 360)", value: "CUNY" },
+  { label: "Microsoft / email (Outlook, Teams)", value: "Microsoft" },
+];
+
+// The backend sends fixed strings for these; match stable substrings so a minor
+// wording edit upstream does not silently drop the chips.
+const isDeviceQuestion = (reply: string) =>
+  reply.toLowerCase().includes("what device are you using");
+
+const isAccountQuestion = (reply: string) => {
+  const text = reply.toLowerCase();
+  return text.includes("cuny login") && text.includes("microsoft/email");
+};
 
 let seq = 0;
 const nextId = () => `i${++seq}`;
 
-/** Suggestions the design shows under a reply, derived from what was asked. */
-function chipsFor(reply: string): string[] {
+/** Tappable answers for the questions the backend asks verbatim. */
+function chipsFor(reply: string): Chip[] {
   const text = reply.toLowerCase();
+
+  if (isAccountQuestion(reply)) return ACCOUNT_CHIPS;
+
   const asksDevice =
+    isDeviceQuestion(reply) ||
     text.includes("what device") ||
     (text.includes("macbook") && text.includes("windows"));
   if (asksDevice) {
     const picks = DEVICES.filter((d) => text.includes(d.toLowerCase()));
-    return picks.length ? picks : DEVICES;
+    const devices = picks.length ? picks : DEVICES;
+    return devices.map((d) => ({ label: d, value: d }));
   }
+
   if (text.includes("let me know") || text.includes("does that work")) {
-    return ["works now", "still stuck"];
+    return [
+      { label: "works now", value: "works now" },
+      { label: "still stuck", value: "still stuck" },
+    ];
   }
   return [];
 }
@@ -257,9 +295,20 @@ export function Chat() {
     [send],
   );
 
-  // Shown once a real conversation is underway, then for the rest of it.
   const hasUserSpoken = items.some(
     (i) => i.kind === "msg" && i.msg.role === "user",
+  );
+
+  // Only offer "did this fix it?" once there is something that could have fixed
+  // it: an assistant reply that is guidance, not the greeting and not one of the
+  // clarifying questions. An MFA or reset walkthrough satisfies this.
+  const inFixFlow = items.some(
+    (i) =>
+      i.kind === "msg" &&
+      i.msg.role === "assistant" &&
+      i.msg.id !== "greeting" &&
+      !isDeviceQuestion(i.msg.content) &&
+      !isAccountQuestion(i.msg.content),
   );
 
   const lastItem = items[items.length - 1];
@@ -326,6 +375,10 @@ export function Chat() {
               }
             })}
 
+            {!hasUserSpoken && !pending && (
+              <Chips options={QUICK_START} onPick={send} disabled={pending} />
+            )}
+
             {pending && <TypingBubble />}
 
             {chips.length > 0 && (
@@ -340,7 +393,7 @@ export function Chat() {
 
         <footer className="shrink-0 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mx-auto flex max-w-[720px] flex-col gap-2.5">
-            {hasUserSpoken && (
+            {inFixFlow && (
               <DeflectionControl
                 result={deflectResult}
                 busy={deflectBusy}

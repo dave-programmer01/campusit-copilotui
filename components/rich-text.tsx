@@ -79,7 +79,7 @@ export function RichText({ text }: { text: string }) {
                   <span className="mt-px grid size-6 shrink-0 place-items-center rounded-full border border-success/40 bg-success/10 text-[0.75rem] font-semibold text-success">
                     {item.marker}
                   </span>
-                  <span className="min-w-0 flex-1 whitespace-pre-wrap">
+                  <span className="min-w-0 flex-1 [overflow-wrap:anywhere] whitespace-pre-wrap">
                     {inline(item.text)}
                   </span>
                 </li>
@@ -92,7 +92,7 @@ export function RichText({ text }: { text: string }) {
           return (
             <p
               key={i}
-              className="mt-3 rounded-2xl border border-line-soft bg-black/15 px-3.5 py-2.5 whitespace-pre-wrap text-off-white/90"
+              className="mt-3 rounded-2xl border border-line-soft bg-black/15 px-3.5 py-2.5 [overflow-wrap:anywhere] whitespace-pre-wrap text-off-white/90"
             >
               {inline(block.text)}
             </p>
@@ -102,7 +102,7 @@ export function RichText({ text }: { text: string }) {
         return (
           <p
             key={i}
-            className={`whitespace-pre-wrap ${
+            className={`[overflow-wrap:anywhere] whitespace-pre-wrap ${
               isHeading(i) ? "font-semibold text-white" : ""
             }`}
           >

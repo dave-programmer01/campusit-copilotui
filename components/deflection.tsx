@@ -50,7 +50,7 @@ export function DeflectionControl({
 
   return (
     <div className="flex items-center gap-2 px-1">
-      <span className="min-w-0 flex-1 truncate text-[0.8125rem] text-light-green">
+      <span className="min-w-0 flex-1 truncate text-[0.8125rem] text-light-green max-[359px]:hidden">
         did this fix it?
       </span>
       <button
