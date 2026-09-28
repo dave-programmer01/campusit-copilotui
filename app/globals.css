@@ -1,33 +1,39 @@
 @import "tailwindcss";
 
+/*
+ * Neutral dark. Flat surfaces separated by 1px rules, never by gradients,
+ * glows or drop shadows. Exactly one accent, used only for actions.
+ */
 @theme {
-  /* Palette — from the CampusIT Co-Pilot design system */
-  --color-lehman: #007a41;
-  --color-lehman-bright: #02b763;
-  --color-deep: #0f2a1d;
-  --color-charcoal: #141d19;
-  --color-light-green: #8ea096;
-  --color-off-white: #e7ecea;
-  --color-success: #22c55e;
-  --color-error: #ef4444;
+  --color-bg: #09090b;
+  --color-surface: #131316;
+  --color-raised: #18181b;
+  --color-border: #27272a;
+  --color-border-strong: #3f3f46;
 
-  /* Semantic surfaces */
-  --color-bg: #061513;
-  --color-surface: #0a1f1b;
-  --color-surface-2: #0d2620;
-  --color-line: #16382e;
-  --color-line-soft: #113028;
+  --color-fg: #fafafa;
+  --color-muted: #a1a1aa;
+  --color-subtle: #8b8b94;
+
+  --color-accent: #15803d;
+  --color-accent-fg: #ffffff;
+  --color-danger: #f87171;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "SF Pro Text", "Segoe UI", sans-serif;
-
-  --radius-bubble: 1.25rem;
 }
 
 html {
   color-scheme: dark;
   /* Keep our own type scale on rotation instead of iOS inflating it. */
   -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  overscroll-behavior-y: none;
 }
 
 /* Every control is at least a 48px touch target on touch devices. */
@@ -40,67 +46,41 @@ html {
   }
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-off-white);
-  font-family: var(--font-sans);
-  overscroll-behavior-y: none;
+/* Visible focus for keyboard users, invisible for mouse users. */
+:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
 }
 
-/* The soft green glow that sits behind every screen in the design */
-.bg-glow {
-  background:
-    radial-gradient(80% 55% at 50% -10%, rgba(0, 122, 65, 0.28), transparent 70%),
-    radial-gradient(60% 45% at 100% 100%, rgba(2, 183, 99, 0.08), transparent 70%),
-    var(--color-bg);
-}
-
-.bg-splash {
-  background:
-    radial-gradient(72% 48% at 50% 22%, rgba(6, 168, 96, 0.45), transparent 72%),
-    linear-gradient(180deg, #0d4a31 0%, #07301f 45%, #041a12 100%);
-}
-
-.ring-glow {
-  box-shadow:
-    0 0 0 1px rgba(34, 197, 94, 0.18),
-    0 0 24px -6px rgba(2, 183, 99, 0.35);
-}
-
-.btn-primary {
-  background: linear-gradient(180deg, #05a45a 0%, #007a41 100%);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.14) inset,
-    0 6px 20px -8px rgba(2, 183, 99, 0.7);
-}
-
-/* The chat occupies exactly the visible viewport. The composer is a flex child
-   at its bottom edge, so it cannot scroll out of view and needs no sticky or
-   fixed positioning (both of which misbehave on iOS Safari).
-   --app-h is set from visualViewport where the browser keeps the layout
-   viewport at full height while the keyboard is open. */
+/*
+ * The chat occupies exactly the visible viewport. The composer is a flex child
+ * at its bottom edge, so it cannot scroll out of view and needs no sticky or
+ * fixed positioning (both of which misbehave on iOS Safari).
+ * --app-h is set from visualViewport where the browser keeps the layout
+ * viewport at full height while the keyboard is open.
+ */
 .app-shell {
   height: 100dvh;
   height: var(--app-h, 100dvh);
 }
 
-/* Scrollbars stay out of the way but keep the green cast */
 .scroll-thin {
   scrollbar-width: thin;
-  scrollbar-color: #1c4a3c transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 .scroll-thin::-webkit-scrollbar {
   width: 6px;
 }
 .scroll-thin::-webkit-scrollbar-thumb {
-  background: #1c4a3c;
+  background: var(--color-border-strong);
   border-radius: 999px;
 }
 
+/* One short, quiet entrance. Nothing else moves on its own. */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(2px);
   }
   to {
     opacity: 1;
@@ -108,19 +88,26 @@ body {
   }
 }
 .animate-rise {
-  animation: rise 0.22s ease-out both;
+  animation: rise 0.14s ease-out both;
 }
 
 @keyframes blink {
-  0%, 80%, 100% {
-    opacity: 0.25;
-    transform: translateY(0);
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
   }
   40% {
     opacity: 1;
-    transform: translateY(-2px);
   }
 }
 .dot {
   animation: blink 1.2s infinite ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .dot {
+    animation: none;
+  }
 }

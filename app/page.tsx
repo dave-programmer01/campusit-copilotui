@@ -1,61 +1,37 @@
 import Link from "next/link";
 import { Bee } from "@/components/bee";
-import { ArrowIcon, BuildingIcon } from "@/components/icons";
 
 export default function Home() {
   return (
-    <main className="bg-splash relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-8 text-center sm:py-12">
-      <CampusSilhouette />
+    <main className="flex min-h-dvh flex-col justify-between px-6 py-10 sm:py-16">
+      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center">
+        <span className="grid size-12 place-items-center rounded-full border border-border bg-raised">
+          <Bee className="size-8" />
+        </span>
 
-      <div className="relative flex w-full max-w-[420px] flex-col items-center">
-        <Bee className="size-24 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] sm:size-32" />
-
-        <h1 className="mt-5 text-[2.125rem] sm:mt-6 sm:text-[2.375rem] leading-[1.1] font-bold tracking-tight text-white sm:text-[2.75rem]">
-          CampusIT
-          <br />
-          Co-Pilot
+        <h1 className="mt-7 text-[2rem] leading-tight font-medium tracking-tight text-fg sm:text-[2.25rem]">
+          CampusIT Co-Pilot
         </h1>
-        <p className="mt-3 text-[0.9375rem] tracking-[0.04em] text-off-white/75">
+        <p className="mt-2 text-[0.9375rem] text-subtle">
           unofficial · student-built
         </p>
 
-        <p className="mt-5 text-[1rem] leading-7 sm:mt-7 text-off-white/90">
-          Your AI assistant for Lehman College tech problems: Wi-Fi, CUNYfirst,
-          and student email. No line. Just chat.
+        <p className="mt-6 text-[1rem] leading-relaxed text-muted">
+          Help with Lehman College tech problems: wifi, logging in, passwords
+          and MFA. No line. Just chat.
         </p>
 
         <Link
           href="/chat"
-          className="btn-primary mt-7 flex w-full sm:mt-9 items-center justify-center gap-2.5 rounded-full px-8 py-4 text-[1.0625rem] font-semibold text-white"
+          className="mt-10 inline-flex min-h-12 items-center justify-center rounded-xl bg-accent px-6 text-[0.9375rem] font-medium text-accent-fg transition-opacity hover:opacity-90"
         >
           Start chatting
-          <ArrowIcon className="size-5" />
         </Link>
-
-        <p className="mt-7 flex items-center gap-2 sm:mt-10 text-[0.875rem] text-off-white/70">
-          <BuildingIcon className="size-5" />
-          Lehman College
-        </p>
       </div>
-    </main>
-  );
-}
 
-/** The faint campus skyline behind the splash. */
-function CampusSilhouette() {
-  return (
-    <svg
-      viewBox="0 0 400 120"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%] w-full text-black/25 [mask-image:linear-gradient(to_bottom,transparent,black_55%)]"
-      fill="currentColor"
-    >
-      <path d="M0 120V74h18V56h10v18h16V46h8v28h22V62h26v58H0Z" />
-      <path d="M108 120V50h14V34l14-10 14 10v16h14v70h-56Zm22-52h14v12h-14V68Z" />
-      <path d="M178 120V66h30V52h8v14h30v54h-68Zm18-38h14v12h-14V82Zm28 0h14v12h-14V82Z" />
-      <path d="M254 120V58h20V40h10v18h18v62h-48Z" />
-      <path d="M312 120V70h24V54h10v16h20v18h34v32h-88Z" />
-    </svg>
+      <p className="mx-auto w-full max-w-sm text-[0.8125rem] text-subtle">
+        Not affiliated with Lehman College IT.
+      </p>
+    </main>
   );
 }

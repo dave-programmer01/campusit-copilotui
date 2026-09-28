@@ -75,8 +75,8 @@ export function RichText({ text }: { text: string }) {
           return (
             <ol key={i} className="space-y-2.5">
               {block.items.map((item, j) => (
-                <li key={j} className="flex gap-3">
-                  <span className="mt-px grid size-6 shrink-0 place-items-center rounded-full border border-success/40 bg-success/10 text-[0.75rem] font-semibold text-success">
+                <li key={j} className="flex gap-2.5">
+                  <span className="mt-0.5 w-4 shrink-0 text-[0.8125rem] tabular-nums text-subtle">
                     {item.marker}
                   </span>
                   <span className="min-w-0 flex-1 [overflow-wrap:anywhere] whitespace-pre-wrap">
@@ -92,7 +92,7 @@ export function RichText({ text }: { text: string }) {
           return (
             <p
               key={i}
-              className="mt-3 rounded-2xl border border-line-soft bg-black/15 px-3.5 py-2.5 [overflow-wrap:anywhere] whitespace-pre-wrap text-off-white/90"
+              className="mt-3 border-l-2 border-border-strong pl-3 [overflow-wrap:anywhere] whitespace-pre-wrap text-muted"
             >
               {inline(block.text)}
             </p>

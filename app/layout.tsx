@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#061513",
+  themeColor: "#09090b",
   // Shrink the layout viewport when the on-screen keyboard opens, so a
   // viewport-height shell keeps its composer above the keyboard.
   interactiveWidget: "resizes-content",

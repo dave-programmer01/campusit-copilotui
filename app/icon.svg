@@ -1,16 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
-    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#18543a"/>
-      <stop offset="1" stop-color="#092a1c"/>
-    </linearGradient>
     <clipPath id="belly">
       <ellipse cx="32" cy="43" rx="14" ry="12.5"/>
     </clipPath>
   </defs>
 
-  <rect width="64" height="64" rx="14" fill="url(#tile)"/>
-  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="#22c55e" stroke-opacity="0.45" stroke-width="1.5"/>
+  <rect width="64" height="64" rx="14" fill="#18181b"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="#3f3f46" stroke-width="1.5"/>
 
   <g transform="translate(32,34) scale(1.14) translate(-32,-34)">
   <g stroke="#20180d" stroke-width="2.6" stroke-linecap="round" fill="none">

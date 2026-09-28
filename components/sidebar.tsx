@@ -36,14 +36,14 @@ export function Sidebar({
   return (
     <div className="flex h-full flex-col gap-6 p-4">
       <div className="flex items-center gap-3 px-1 pt-1">
-        <span className="grid size-11 shrink-0 place-items-center rounded-full border border-success/25 bg-deep ring-glow">
-          <Bee className="size-8" />
+        <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-raised">
+          <Bee className="size-7" />
         </span>
         <div className="min-w-0">
-          <p className="truncate text-[0.9375rem] font-semibold text-white">
+          <p className="truncate text-[0.9375rem] font-medium text-fg">
             CampusIT Co-Pilot
           </p>
-          <p className="truncate text-[0.75rem] text-light-green">
+          <p className="truncate text-[0.75rem] text-subtle">
             unofficial · student-built
           </p>
         </div>
@@ -60,19 +60,19 @@ export function Sidebar({
               aria-current={isActive ? "page" : undefined}
               className={`flex min-h-12 items-center gap-3 rounded-2xl px-3 py-3 text-[0.9375rem] transition ${
                 isActive
-                  ? "border border-success/25 bg-success/12 font-medium text-white"
-                  : "border border-transparent text-off-white/80 hover:bg-white/5"
+                  ? "bg-raised text-fg"
+                  : "text-muted hover:bg-raised/60 hover:text-fg"
               }`}
             >
-              <Icon className="size-5 shrink-0 text-success/90" />
+              <Icon className="size-4.5 shrink-0 text-subtle" />
               {label}
             </button>
           );
         })}
       </nav>
 
-      <div className="mt-auto rounded-2xl border border-line bg-black/20 p-3.5">
-        <p className="text-[0.8125rem] font-semibold text-white">
+      <div className="mt-auto border-t border-border pt-4">
+        <p className="px-2 text-[0.75rem] tracking-wide text-subtle uppercase">
           Need to talk to a real person?
         </p>
         <a
@@ -81,16 +81,16 @@ export function Sidebar({
           rel="noopener noreferrer"
           className="mt-2 flex min-h-12 items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5"
         >
-          <BuildingIcon className="size-6 shrink-0 text-success" />
+          <BuildingIcon className="size-4.5 shrink-0 text-subtle" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[0.8125rem] text-off-white">
-              LehmanQ <span className="text-success">(online)</span>
+            <span className="block truncate text-[0.8125rem] text-fg">
+              LehmanQ
             </span>
-            <span className="block truncate text-[0.6875rem] text-light-green">
+            <span className="block truncate text-[0.6875rem] text-subtle">
               lehman.edu/q
             </span>
           </span>
-          <ChevronIcon className="size-4 shrink-0 text-success" />
+          <ChevronIcon className="size-3.5 shrink-0 text-subtle" />
         </a>
         <a
           href="https://maps.google.com/?q=Carman+Hall+Lehman+College+Bronx+NY"
@@ -98,16 +98,16 @@ export function Sidebar({
           rel="noopener noreferrer"
           className="mt-1 flex min-h-12 items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5"
         >
-          <PinIcon className="size-6 shrink-0 text-success" />
+          <PinIcon className="size-4.5 shrink-0 text-subtle" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[0.8125rem] text-off-white">
+            <span className="block truncate text-[0.8125rem] text-fg">
               Carman Hall 108
             </span>
-            <span className="block truncate text-[0.6875rem] text-light-green">
+            <span className="block truncate text-[0.6875rem] text-subtle">
               (in person)
             </span>
           </span>
-          <ChevronIcon className="size-4 shrink-0 text-success" />
+          <ChevronIcon className="size-3.5 shrink-0 text-subtle" />
         </a>
       </div>
     </div>

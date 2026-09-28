@@ -116,7 +116,7 @@ export function BeeAvatar({
 }) {
   return (
     <span
-      className={`${className} grid shrink-0 place-items-center overflow-hidden rounded-full border border-success/25 bg-deep ring-glow`}
+      className={`${className} grid shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-raised`}
     >
       <Bee className="size-[86%]" mood={mood} />
     </span>

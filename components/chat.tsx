@@ -320,9 +320,9 @@ export function Chat() {
       : [];
 
   return (
-    <div className="app-shell flex flex-col overflow-hidden bg-glow lg:flex-row">
+    <div className="app-shell flex flex-col overflow-hidden bg-bg lg:flex-row">
       {/* Sidebar — permanent on desktop, drawer on mobile */}
-      <aside className="hidden w-[16.5rem] shrink-0 border-r border-line bg-surface/60 lg:block">
+      <aside className="hidden w-64 shrink-0 border-r border-border bg-surface lg:block">
         <Sidebar active={nav} onNavigate={onNavigate} />
       </aside>
 
@@ -332,38 +332,37 @@ export function Chat() {
             type="button"
             aria-label="Close menu"
             onClick={() => setDrawer(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60"
           />
-          <div className="absolute inset-y-0 left-0 w-[280px] max-w-[85%] animate-rise border-r border-line bg-surface">
+          <div className="absolute inset-y-0 left-0 w-72 max-w-[85%] animate-rise border-r border-border bg-surface">
             <Sidebar active={nav} onNavigate={onNavigate} />
           </div>
         </div>
       )}
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3">
+        <header className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
           <button
             type="button"
             onClick={() => setDrawer(true)}
             aria-label="Open menu"
-            className="-ml-2 grid size-12 place-items-center rounded-xl text-off-white/80 transition hover:bg-white/5 lg:hidden"
+            className="-ml-2 grid size-12 place-items-center rounded-lg text-muted transition-colors hover:bg-raised hover:text-fg lg:hidden"
           >
             <MenuIcon className="size-5" />
           </button>
-          <BeeAvatar className="size-10" />
+          <BeeAvatar className="size-8" />
           <div className="min-w-0">
-            <p className="flex items-center gap-2 truncate text-[0.9375rem] font-semibold text-white">
+            <p className="truncate text-[0.9375rem] font-medium text-fg">
               CampusIT Co-Pilot
-              <span className="size-1.5 shrink-0 rounded-full bg-success" />
             </p>
-            <p className="truncate text-[0.75rem] text-light-green">
+            <p className="truncate text-[0.75rem] text-subtle">
               unofficial · student-built
             </p>
           </div>
         </header>
 
-        <main className="scroll-thin min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5">
-          <div className="mx-auto flex max-w-[720px] flex-col gap-4">
+        <main className="scroll-thin min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-6">
+          <div className="mx-auto flex max-w-2xl flex-col gap-5">
             {items.map((item) => {
               switch (item.kind) {
                 case "msg":
@@ -391,8 +390,8 @@ export function Chat() {
           </div>
         </main>
 
-        <footer className="shrink-0 border-t border-line bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <div className="mx-auto flex max-w-[720px] flex-col gap-2.5">
+        <footer className="shrink-0 border-t border-border px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto flex max-w-2xl flex-col gap-3">
             {inFixFlow && (
               <DeflectionControl
                 result={deflectResult}
@@ -419,13 +418,13 @@ export function Chat() {
                 }}
                 placeholder="Type your message..."
                 aria-label="Message"
-                className="scroll-thin max-h-32 min-h-12 flex-1 resize-none rounded-3xl border border-line bg-black/25 px-4 py-3 text-base leading-6 text-off-white placeholder:text-light-green/70 focus:border-success/50 focus:outline-none"
+                className="scroll-thin max-h-32 min-h-12 flex-1 resize-none rounded-xl border border-border bg-surface px-3.5 py-3 text-base leading-6 text-fg placeholder:text-subtle focus:border-border-strong focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={!draft.trim() || pending}
                 aria-label="Send"
-                className="btn-primary grid size-12 shrink-0 place-items-center rounded-full text-white transition disabled:opacity-40"
+                className="grid size-12 shrink-0 place-items-center rounded-xl bg-accent text-accent-fg transition-colors hover:opacity-90 disabled:bg-surface disabled:text-subtle"
               >
                 <SendIcon className="size-5" />
               </button>
@@ -439,17 +438,16 @@ export function Chat() {
 
 function AboutCard() {
   return (
-    <div className="flex animate-rise items-start gap-2.5">
-      <BeeAvatar className="mt-0.5 size-9" />
-      <div className="max-w-[520px] rounded-bubble rounded-tl-md border border-line bg-deep px-4 py-3.5 text-[0.9375rem] leading-6 text-off-white">
-        <p className="font-semibold text-white">about this thing</p>
-        <p className="mt-1.5 text-off-white/90">
-          i&apos;m an <span className="font-semibold">unofficial, student-built</span>{" "}
+    <div className="flex animate-rise">
+      <div className="max-w-[32rem] rounded-2xl rounded-tl-md border border-border bg-raised px-4 py-3 text-[0.9375rem] leading-6 text-fg">
+        <p className="font-medium">about this thing</p>
+        <p className="mt-1.5 text-muted">
+          i&apos;m an <span className="text-fg">unofficial, student-built</span>{" "}
           helper for Lehman College tech problems, not run by Lehman IT. i walk
           you through wifi, login, CUNYfirst and email fixes so you don&apos;t
           have to stand in line.
         </p>
-        <p className="mt-2 text-light-green">
+        <p className="mt-2 text-subtle">
           for anything official (or if i strike out): LehmanQ at lehman.edu/q, or
           Carman Hall 108.
         </p>
@@ -467,11 +465,11 @@ function ErrorCard({
 }) {
   if (error.kind === "config") {
     return (
-      <div className="animate-rise rounded-2xl border border-error/40 bg-error/10 p-4 text-[0.875rem] text-off-white">
-        <p className="font-semibold">not wired up yet</p>
-        <p className="mt-1 text-off-white/85">
-          set <code className="text-success">NEXT_PUBLIC_API_BASE_URL</code> to
-          the backend URL and reload.
+      <div className="animate-rise rounded-xl border border-border bg-raised p-4 text-[0.875rem] text-fg">
+        <p className="font-medium text-danger">not wired up yet</p>
+        <p className="mt-1 text-muted">
+          set <code className="text-fg">NEXT_PUBLIC_API_BASE_URL</code> to the
+          backend URL and reload.
         </p>
       </div>
     );
@@ -479,18 +477,18 @@ function ErrorCard({
 
   const rate = error.kind === "rate";
   return (
-    <div className="animate-rise max-w-[420px] rounded-2xl border border-line bg-surface-2/80 p-4">
-      <div className="flex items-center gap-2.5 text-white">
+    <div className="animate-rise max-w-[26rem] rounded-xl border border-border bg-raised p-4">
+      <div className="flex items-center gap-2.5 text-fg">
         {rate ? (
           <ClockIcon className="size-5" />
         ) : (
           <WifiIcon className="size-5" />
         )}
-        <p className="text-[0.9375rem] font-semibold">
+        <p className="text-[0.9375rem] font-medium">
           {rate ? "Rate limit" : "Connection error"}
         </p>
       </div>
-      <p className="mt-2 text-[0.875rem] leading-6 text-light-green">
+      <p className="mt-2 text-[0.875rem] leading-6 text-muted">
         {rate
           ? `one sec, too many messages. try again in ${
               error.retryAfter ? `${error.retryAfter}s` : "a moment"
@@ -500,7 +498,7 @@ function ErrorCard({
       <button
         type="button"
         onClick={onRetry}
-        className="mt-3 inline-flex min-h-12 items-center gap-2 rounded-full border border-success/45 px-5 text-[0.875rem] font-medium text-off-white transition hover:bg-success/10"
+        className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 text-[0.875rem] text-fg transition-colors hover:border-border-strong hover:bg-surface"
       >
         <RefreshIcon className="size-4" />
         {rate ? "Try again" : "Retry"}
